@@ -1,4 +1,3 @@
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/SimplyTim/Bloodline-Web-App) 
 
 # Bloodline Web Application
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/SimplyTim/Bloodline-Web-App.git) 
