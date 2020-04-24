@@ -41,3 +41,9 @@ jwt = JWT(app, authenticate, identity)
 @app.route('/')
 def index():
     return "Welcome to Bloodline."
+
+@app.route('/user', methods=['POST'])
+def signUpUser():
+
+@app.route('/user/<id>', methods=['GET'])
+def getUser():
