@@ -27,8 +27,8 @@ app.app_context().push()
 ''' End Boilerplate Code '''
 
 ''' Set up JWT here '''
-def authenticate(uname, password):
-  user = User.query.filter_by(username=uname).first()
+def authenticate(emailAdd, password):
+  user = User.query.filter_by(email=emailAdd).first()
   if user and user.check_password(password):
     return user
 
@@ -41,6 +41,12 @@ jwt = JWT(app, authenticate, identity)
 @app.route('/')
 def index():
     return "Welcome to Bloodline."
+
+
+@app.route('/app')      #just for testing stuff
+def client_app():
+    return app.send_static_file('googlemaps.html')
+
 
 #****************************************
 #******************USER******************

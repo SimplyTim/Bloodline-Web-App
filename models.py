@@ -10,6 +10,7 @@ class User(db.Model):
     email = db.Column('email', db.String(50), unique=True, nullable=True)
     password = db.Column('password', db.String(32), unique=True, nullable=False)
     userType = db.Column('type', db.String(1), nullable=False)
+
     def toDict(self):
         return {
         "id": self.id,
@@ -47,3 +48,11 @@ class Appointment(db.Model):
     userId = db.Column('userId', db.Integer, db.ForeignKey('user.id'), nullable=False)
     bloodcentre = db.relationship('BloodCentre')
     user = db.relationship('User')
+
+    def toDict(self):
+        return {
+        "aptId": self.aptId,
+        "dateTime": self.dateTime,
+        "centreId": self.centreId,
+        "userID":self.userId,
+        }
