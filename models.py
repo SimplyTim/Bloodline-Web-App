@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
+
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -54,5 +55,7 @@ class Appointment(db.Model):
         "aptId": self.aptId,
         "dateTime": self.dateTime,
         "centreId": self.centreId,
-        "userID":self.userId,
+        "userID":self.userId
         }
+
+
