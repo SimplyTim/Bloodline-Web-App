@@ -8,9 +8,15 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(50), unique=True, nullable=False)
-    email = db.Column('email', db.String(50), unique=True, nullable=True)
-    password = db.Column('password', db.String(32), unique=True, nullable=False)
+    email = db.Column('email', db.String(50), unique=True, nullable=False)
+    password = db.Column('password', db.String(32),  nullable=False)
     userType = db.Column('type', db.String(1), nullable=False)
+    name = db.Column('name', db.String(40), nullable=False)
+    age = db.Column('age', db.String(3), nullable=False)
+    DOB = db.Column('DOB', db.String(15), nullable=False)
+    bloodGroup = db.Column('bloodGroup', db.String(10), nullable=True)
+    bloodCentreId = db.Column('bloodCentreId', db.Integer, db.ForeignKey('blood_centre.centreId'), nullable=True)
+    bloodcentre = db.relationship('BloodCentre')
 
     def toDict(self):
         return {
@@ -18,7 +24,12 @@ class User(db.Model):
         "username": self.username,
         "email": self.email,
         "password":self.password,
-        "userType": self.userType
+        "userType": self.userType,
+        "name": self.name,
+        "age": self.age,
+        "DOB": self.DOB,
+        "bloodGroup": self.bloodGroup,
+        "bloodCentreId": self.bloodCentreId
         }
 
     def set_password(self, password):
@@ -27,19 +38,22 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
+    def addBloodType(self, bloodType):
+        self.bloodGroup = bloodType
+
+    def setBloodCentre(self, centreId):
+        self.bloodCentreId = centreId
+
 class BloodCentre(db.Model):
     centreId = db.Column('centreId', db.Integer, primary_key=True)
     centreName = db.Column('centreName', db.String(50), nullable=False)
     centreAddress = db.Column('centreAddress', db.String(100), nullable=False)
-    hostId = db.Column('host', db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User')  #references the account that manages the blood drive
 
     def toDict(self):
         return {
         "centreId": self.centreId,
         "centreName": self.centreName,
-        "centreAddress": self.centreAddress,
-        "host":self.hostId
+        "centreAddress": self.centreAddress
         }
 
 class Appointment(db.Model):
@@ -47,6 +61,7 @@ class Appointment(db.Model):
     dateTime = db.Column('dateTime', db.DateTime, nullable=False)
     centreId = db.Column('centreId', db.Integer, db.ForeignKey('blood_centre.centreId'), nullable=False)
     userId = db.Column('userId', db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column('status', db.String(10), default="Scheduled")
     bloodcentre = db.relationship('BloodCentre')
     user = db.relationship('User')
 
@@ -55,7 +70,8 @@ class Appointment(db.Model):
         "aptId": self.aptId,
         "dateTime": self.dateTime,
         "centreId": self.centreId,
-        "userID":self.userId
+        "userID":self.userId,
+        "status":self.status
         }
 
 

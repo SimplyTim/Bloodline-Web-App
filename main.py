@@ -61,6 +61,10 @@ def getCurrentUser(token):
         return loggedIn.toDict()
     return None
 
+def convertDate(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
 @app.route('/')
 def index():
     return "Welcome to Bloodline."
@@ -76,7 +80,9 @@ def client_app():
 @app.route('/user', methods=['POST'])
 def signUpUser():
     userdata = request.get_json()
-    newUser = User(username=userdata['username'], email=userdata['email'], userType=userdata['userType'])
+    newUser = User(username=userdata['username'], email=userdata['email'], userType=userdata['userType'], name=userdata['name'], age=userdata['age'], DOB=userdata['DOB'])
+    if 'bloodGroup' in userdata:
+        setattr(newUser, 'bloodGroup', userdata['bloodGroup'])
     newUser.set_password(userdata['password'])
     print(newUser.toDict())
     try:
@@ -113,17 +119,34 @@ def getUsers():
         return "No accounts registered in system.", 404
     return "Not authorized to access this page.", 401
 
+#TODO:
+'''
+@app.route('/user/<id>/', methods=['PUT'])
+def editUser(id, field):
+
+    toEdit = User.query.get(int(id))
+    if toEdit:
+        if field in toEdit:
+            setattr(toEdit, field)
+
+        db.session.delete(toDelete)
+        db.session.commit()
+        return "User deleted.", 204
+    return "Invalid user.", 404
+'''
+
 @app.route('/user/<id>', methods=['DELETE'])
-@token_required #not working idk why
+@token_required
 def deleteUser(id):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
     if account['id'] == int(id) or account['userType']=='a':
         toDelete = User.query.get(int(id))
         if toDelete: 
-            if toDelete['userType'] == 'a':
+            toDeleteDict = toDelete.toDict()
+            if toDeleteDict['userType'] == 'a':
                 return "An administrator account cannot be deleted.", 400
-            db.session.delete(account)
+            db.session.delete(toDelete)
             db.session.commit()
             return "User deleted.", 204
         return "Invalid user.", 404
@@ -135,8 +158,10 @@ def deleteUser(id):
 @app.route('/appointment', methods=['POST'])
 @token_required
 def createAppointment():
-    appointmentdata = request.get_json()
-    newappointment = Appointment(dateTime=appointmentdata['dateTime'], centreId=appointmentdata['centreId'], userId=appointmentdata['userId']) # create appointment object
+    appointmentData = request.get_json()
+    aptDate = datetime.datetime.strptime(appointmentData['dateTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    print(aptDate)
+    newappointment = Appointment(dateTime=aptDate, centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
     try:
         db.session.add(newappointment)
         db.session.commit()
@@ -153,39 +178,63 @@ def getAppointments():
     if account['userType']=='a':
         appointments = Appointment.query.all()
         if appointments:
-            appointments = [appointment.toDict() for appointment in appointments]
-            return json.dumps(appointments), 200
+            appointmentsList = [appointment.toDict() for appointment in appointments]
+            return json.dumps(appointmentsList, default = convertDate), 200
         return "No appointments found.", 404
     return "Not authorized to access this page.", 401
 
-@app.route('/appointment/<id>/centre', methods=['GET'])
-#@jwt_required()
-def get_appointment_centre(id):
-    appointment = Appointment.query.filter_by().first()
-    if appointment == None:
-        return 'Invalid id or unauthorized'
-    return json.dumps(appointment.toDict())
+@app.route('/appointment/centre/<centreId>', methods=['GET'])
+@token_required
+def getCentreAppointments(centreId):
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType']=='a' or account['id'] == centreId:
+        appointments = Appointment.query.filter_by(centreId = centreId).all()
+        if len(appointments) == 0:
+            return "No appointments found for this blood centre or blood centre not found.", 404
+        appointmentsList = [appointment.toDict() for appointment in appointments]
+        return json.dumps(appointmentsList, default = convertDate), 200
+    return "Not authorized to access this page", 401
+  
 
-@app.route('/appointment/<id>/user', methods=['GET'])
-#@jwt_required()
-def get_appointment_user(id):
-    appointment = Appointment.query.filter_by().first()
-    if appointment == None:
-        return 'Invalid id or unauthorized'
-    return json.dumps(appointment.toDict())
+@app.route('/appointment/user/<userId>', methods=['GET'])
+@token_required
+def getUserAppointments(userId):
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType']=='a' or account['id'] == userId:
+        appointments = Appointment.query.filter_by(userId = userId).all()
+        if len(appointments) == 0:
+            return "No appointments found for this user or user not found.", 404
+        appointmentsList = [appointment.toDict() for appointment in appointments]
+        return json.dumps(appointmentsList, default = convertDate), 200
+    return "Not authorized to access this page", 401
 
+#TODO:
+'''
+@app.route('/appointment/<aptId>', method=['PUT'])
+@token_required
+def editAppointment(aptId):
+'''
 
+@app.route('/appointment/<aptId>', methods=['DELETE'])
+@token_required
+def deleteAppointment(aptId):
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType']=='a':
+        appointment = Appointment.query.get(aptId)
+        if appointment:
+            db.session.delete(appointment)
+            db.session.commit()
+            return 'Deleted', 204
+        return "Invalid appointment.", 404
+    return "Not authorized to access this page.", 401
 
-@app.route('/appointment/<id>', methods=['DELETE'])
-#@jwt_required()
-def delete_Appointment(id):
-    appointment = Appointment.query.filter_by().first()
-    if appointment == None:
-        return 'Invalid id or unauthorized'
-    db.session.delete(appointment) # delete the object
-    db.session.commit()
-    return 'Deleted', 204
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
 
+''' -To delete
 #************************************
 #******************BLOODCENTRE*******
 #************************************
@@ -227,6 +276,4 @@ def deleteCentre(id):
     db.session.delete(bc) # delete the object
     db.session.commit()
     return 'Deleted', 204
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+'''
