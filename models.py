@@ -58,7 +58,8 @@ class BloodCentre(db.Model):
 
 class Appointment(db.Model):
     aptId = db.Column('aptId', db.Integer, primary_key=True)   
-    dateTime = db.Column('dateTime', db.DateTime, nullable=False)
+    date = db.Column('date', db.String(15), nullable=False)
+    time = db.Column('time', db.String(10), nullable=False)
     centreId = db.Column('centreId', db.Integer, db.ForeignKey('blood_centre.centreId'), nullable=False)
     userId = db.Column('userId', db.Integer, db.ForeignKey('user.id'), nullable=False)
     status = db.Column('status', db.String(10), default="Scheduled")
@@ -68,7 +69,8 @@ class Appointment(db.Model):
     def toDict(self):
         return {
         "aptId": self.aptId,
-        "dateTime": self.dateTime,
+        "date": self.date,
+        "time": self.time,
         "centreId": self.centreId,
         "userID":self.userId,
         "status":self.status

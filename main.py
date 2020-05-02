@@ -93,17 +93,26 @@ def signUpUser():
         return 'username or email already exists', 400
     return 'User created', 200
 
+@app.route('/user', methods=['GET'])
+@token_required
+def getLoggedInUser():
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    userData = User.query.get(account['id'])
+    if userData:
+        return json.dumps(userData.toDict()), 200
+    return "Details not found.", 404
+
 @app.route('/user/<id>', methods=['GET'])
 @token_required
 def getUser(id):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
     if account['id'] == int(id) or account['userType']=='a':
-        users = User.query.all()
-        if len(users) == 0 or len(users) < int(id):
-            return "Invalid id", 404
-        userData = users[int(id)-1]
-        return json.dumps(userData.toDict()), 200
+        userData = User.query.get(account['id'])
+        if userData:
+            return json.dumps(userData.toDict()), 200
+        return "Invalid user.", 404
     return "Not authorized to access this page", 401
 
 @app.route('/users', methods=['GET'])
@@ -119,21 +128,22 @@ def getUsers():
         return "No accounts registered in system.", 404
     return "Not authorized to access this page.", 401
 
-#TODO:
-'''
-@app.route('/user/<id>/', methods=['PUT'])
-def editUser(id, field):
-
-    toEdit = User.query.get(int(id))
-    if toEdit:
-        if field in toEdit:
-            setattr(toEdit, field)
-
-        db.session.delete(toDelete)
-        db.session.commit()
-        return "User deleted.", 204
-    return "Invalid user.", 404
-'''
+@app.route('/user/<id>', methods=['PUT'])
+@token_required
+def editUser(id):
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    editData = request.get_json()
+    if account['id'] == int(id) or account['userType']=='a':
+        toEdit = User.query.get(int(id))
+        if toEdit:
+            for key in editData:
+                setattr(toEdit, str(key), editData[str(key)])
+            db.session.add(toEdit)
+            db.session.commit()
+            return "Details updated successfully.", 201
+        return "Invalid user.", 404
+    return "Not authorized to access this page.", 401
 
 @app.route('/user/<id>', methods=['DELETE'])
 @token_required
@@ -159,9 +169,7 @@ def deleteUser(id):
 @token_required
 def createAppointment():
     appointmentData = request.get_json()
-    aptDate = datetime.datetime.strptime(appointmentData['dateTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
-    print(aptDate)
-    newappointment = Appointment(dateTime=aptDate, centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
+    newappointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
     try:
         db.session.add(newappointment)
         db.session.commit()
@@ -210,7 +218,7 @@ def getUserAppointments(userId):
         return json.dumps(appointmentsList, default = convertDate), 200
     return "Not authorized to access this page", 401
 
-#TODO:
+#TODO: Need details about Blood Centre first.
 '''
 @app.route('/appointment/<aptId>', method=['PUT'])
 @token_required
