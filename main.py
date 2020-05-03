@@ -169,14 +169,18 @@ def deleteUser(id):
 @token_required
 def createAppointment():
     appointmentData = request.get_json()
-    newappointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
-    try:
-        db.session.add(newappointment)
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        return "Appointment already created.", 400
-    return "Appointment created successfully.", 200
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType'] == 'a' or account['id'] == appointmentData['userId']:
+        newappointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
+        try:
+            db.session.add(newappointment)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return "Appointment already created.", 400
+        return "Appointment created successfully.", 200
+    return "Not authorized to access this page.", 401
 
 @app.route('/appointments', methods=['GET'])
 @token_required
