@@ -72,7 +72,7 @@ class Appointment(db.Model):
         "date": self.date,
         "time": self.time,
         "centreId": self.centreId,
-        "userID":self.userId,
+        "userId":self.userId,
         "status":self.status
         }
 

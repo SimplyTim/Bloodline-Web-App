@@ -169,8 +169,8 @@ def createAppointment():
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
     appointmentData = request.get_json()
-    newAppointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
-    if account['id'] == newAppointment['userId'] or account['userType'] =='a':
+    newAppointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId'])
+    if account['id'] == int(appointmentData['userId']) or account['userType'] =='a':
         try:
             db.session.add(newAppointment)
             db.session.commit()
@@ -226,15 +226,17 @@ def editAppointment(aptId):
     account = getCurrentUser(token)
     editData = request.get_json()
     toEdit = Appointment.query.get(int(aptId))
-    if toEdit['userId'] == account['id'] or toEdit['centreId'] == account['bloodCentreId'] or account['userType'] =='a':
-        if toEdit:
+    if toEdit:
+        toEditDict = toEdit.toDict()
+        if toEditDict['userId'] == account['id'] or toEditDict['centreId'] == account['bloodCentreId'] or account['userType'] =='a':
             for key in editData:
                 setattr(toEdit, str(key), editData[str(key)])
             db.session.add(toEdit)
             db.session.commit()
             return "Details updated successfully.", 201
-        return "Invalid user.", 404
-    return "Not authorized to access this page.", 401
+        return "Not authorized to access this page.", 401
+    return "Invalid appointment.", 404
+
 
 @app.route('/appointment/<aptId>', methods=['DELETE'])
 @token_required
