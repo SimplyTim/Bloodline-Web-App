@@ -69,11 +69,9 @@ def convertDate(o):
 def index():
     return "Welcome to Bloodline."
 
-
 @app.route('/app')      #just for testing stuff
 def client_app():
     return app.send_static_file('googlemaps.html')
-
 
 #USER ROUTES
 
@@ -90,8 +88,8 @@ def signUpUser():
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return 'username or email already exists', 400
-    return 'User created', 200
+        return "Username or email already exists", 400
+    return "User created", 200
 
 @app.route('/user', methods=['GET'])
 @token_required
@@ -168,13 +166,13 @@ def deleteUser(id):
 @app.route('/appointment', methods=['POST'])
 @token_required
 def createAppointment():
-    appointmentData = request.get_json()
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    if account['userType'] == 'a' or account['id'] == appointmentData['userId']:
-        newappointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
+    appointmentData = request.get_json()
+    newAppointment = Appointment(date=appointmentData['date'], time=appointmentData['time'], centreId=appointmentData['centreId'], userId=appointmentData['userId']) # create appointment object
+    if account['id'] == newAppointment['userId'] or account['userType'] =='a':
         try:
-            db.session.add(newappointment)
+            db.session.add(newAppointment)
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
@@ -208,7 +206,6 @@ def getCentreAppointments(centreId):
         return json.dumps(appointmentsList, default = convertDate), 200
     return "Not authorized to access this page", 401
   
-
 @app.route('/appointment/user/<userId>', methods=['GET'])
 @token_required
 def getUserAppointments(userId):
@@ -222,12 +219,22 @@ def getUserAppointments(userId):
         return json.dumps(appointmentsList, default = convertDate), 200
     return "Not authorized to access this page", 401
 
-#TODO: Need details about Blood Centre first.
-'''
-@app.route('/appointment/<aptId>', method=['PUT'])
+@app.route('/appointment/<aptId>', methods=['PUT'])
 @token_required
 def editAppointment(aptId):
-'''
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    editData = request.get_json()
+    toEdit = Appointment.query.get(int(aptId))
+    if toEdit['userId'] == account['id'] or toEdit['centreId'] == account['bloodCentreId'] or account['userType'] =='a':
+        if toEdit:
+            for key in editData:
+                setattr(toEdit, str(key), editData[str(key)])
+            db.session.add(toEdit)
+            db.session.commit()
+            return "Details updated successfully.", 201
+        return "Invalid user.", 404
+    return "Not authorized to access this page.", 401
 
 @app.route('/appointment/<aptId>', methods=['DELETE'])
 @token_required
@@ -243,49 +250,46 @@ def deleteAppointment(aptId):
         return "Invalid appointment.", 404
     return "Not authorized to access this page.", 401
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+#BLOOD CENTRE ROUTES
 
-''' -To delete
-#************************************
-#******************BLOODCENTRE*******
-#************************************
-
-@app.route('/bloodcentres', methods=['POST'])
-def signUpBloodCentre():
-    bcdata = request.get_json() # get bcdata
-    bc= BloodCentre(centreName=bc['centreName'],centreAddress=bc['centreAddress'],  hostId=bc['hostId']) # create bloodcentre object
-
-    try:
-        db.session.add(bc)
-        db.session.commit() # save bloodcentre
-    except IntegrityError: # attempted to insert a duplicate
-        db.session.rollback()
-        return 'appointment already exits' # error message
-    return 'appointment created' # success
-
-@app.route('/bloodcentre/<id>', methods=['GET'])
-#@jwt_required()
-def get_bloodcentre(id):
-    bc = BloodCentre.query.filter_by().first()
-    if bc == None:
-        return 'Invalid id or unauthorized'
-    return json.dumps(bc.toDict())
+@app.route('/bloodcentre', methods=['POST'])
+@token_required
+def createBloodCentre():
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType']=='a':
+        bcData = request.get_json()
+        bc = BloodCentre(centreName=bcData['centreName'],centreAddress=bcData['centreAddress'])
+        try:
+            db.session.add(bc)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return "Blood Centre already exists.", 400
+        return "Blood Centre created successfully.", 200
+    return "Not authorized to access this page.", 401
 
 @app.route('/bloodcentres', methods=['GET'])
-#@jwt_required()
-def getBloodCentres():
-    bc = BloodCentre.query.filter_by().all()
-    bc = [BloodCentre.toDict() for b in bc] # list comprehension which converts bloodcentre objects to dictionaries
-    return json.dumps(bc)
+def getBloodCentre():
+    bc = BloodCentre.query.all()
+    bc = [b.toDict() for b in bc]
+    if bc:
+        return json.dumps(bc), 200
+    return "No blood centres in system.", 404
 
 @app.route('/bloodcentre/<id>', methods=['DELETE'])
-#@jwt_required()
+@token_required
 def deleteCentre(id):
-    bc =BloodCentre.query.filter_by().first()
-    if bc == None:
-        return 'Invalid id or unauthorized'
-    db.session.delete(bc) # delete the object
-    db.session.commit()
-    return 'Deleted', 204
-'''
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if account['userType']=='a':
+        bc = BloodCentre.query.get(int(id))
+        if bc:
+            db.session.delete(bc) # delete the object
+            db.session.commit()
+            return "Blood centre deleted successfully.", 204
+        return "Invalid id or unauthorized.", 400
+    return "Not authorized to access this page.", 401
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
