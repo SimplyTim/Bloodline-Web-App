@@ -14,13 +14,14 @@ from models import db, User, BloodCentre, Appointment
 
 ''' Begin boilerplate code '''
 def create_app():
-  app = Flask(__name__, static_url_path='')
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-  app.config['SECRET_KEY'] = "SECRET6555"
+    app = Flask(__name__, static_url_path='')
+    CORS(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db' #need to set up mysql database?
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    app.config['SECRET_KEY'] = "SECRET6555"
 
-  db.init_app(app)
-  return app
+    db.init_app(app)
+    return app
 
 app = create_app()
 
@@ -46,17 +47,17 @@ def token_required(f):
 @app.route('/login', methods=['POST'])
 def login():
     userDetails = request.get_json()
-    user = User.query.filter_by(email=userDetails['email']).first()
+    user = User.query.filter_by(username=userDetails['username']).first()
     if user and user.check_password(userDetails['password']):
-        token = jwt.encode({'email' : userDetails['email'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'username' : userDetails['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.config['SECRET_KEY'])
         return  jsonify({'token' : token.decode('UTF-8')}), 200
-    return "Invalid email or password entered.", 401
+    return "Invalid username or password entered.", 401
 ''' End JWT Setup '''
 
 def getCurrentUser(token):
     userObj = jwt.decode(token,app.config['SECRET_KEY'])
-    mail = userObj['email']
-    loggedIn = User.query.filter_by(email=mail).first()
+    uname = userObj['username']
+    loggedIn = User.query.filter_by(username=uname).first()
     if loggedIn:
         return loggedIn.toDict()
     return None
@@ -78,7 +79,7 @@ def client_app():
 @app.route('/user', methods=['POST'])
 def signUpUser():
     userdata = request.get_json()
-    newUser = User(username=userdata['username'], email=userdata['email'], userType=userdata['userType'], name=userdata['name'], age=userdata['age'], DOB=userdata['DOB'])
+    newUser = User(username=userdata['username'], userType=userdata['userType'], fName=userdata['fName'], lName=userdata['lName'], age=userdata['age'], DOB=userdata['DOB'])
     if 'bloodGroup' in userdata:
         setattr(newUser, 'bloodGroup', userdata['bloodGroup'])
     newUser.set_password(userdata['password'])
@@ -88,7 +89,7 @@ def signUpUser():
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return "Username or email already exists", 400
+        return "Username already exists", 400
     return "User created", 200
 
 @app.route('/user', methods=['GET'])

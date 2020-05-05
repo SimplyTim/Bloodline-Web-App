@@ -8,10 +8,10 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(50), unique=True, nullable=False)
-    email = db.Column('email', db.String(50), unique=True, nullable=False)
     password = db.Column('password', db.String(32),  nullable=False)
     userType = db.Column('type', db.String(1), nullable=False)
-    name = db.Column('name', db.String(40), nullable=False)
+    fName = db.Column('fName', db.String(20), nullable=False)
+    lName = db.Column('lName', db.String(20), nullable=False)
     age = db.Column('age', db.String(3), nullable=False)
     DOB = db.Column('DOB', db.String(15), nullable=False)
     bloodGroup = db.Column('bloodGroup', db.String(10), nullable=True)
@@ -22,10 +22,10 @@ class User(db.Model):
         return {
         "id": self.id,
         "username": self.username,
-        "email": self.email,
         "password":self.password,
         "userType": self.userType,
-        "name": self.name,
+        "fName": self.fName,
+        "lName": self.lName,
         "age": self.age,
         "DOB": self.DOB,
         "bloodGroup": self.bloodGroup,
