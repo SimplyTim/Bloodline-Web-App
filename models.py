@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(50), unique=True, nullable=False)
-    password = db.Column('password', db.String(32),  nullable=False)
+    password = db.Column('password', db.String(128),  nullable=False)
     userType = db.Column('type', db.String(1), nullable=False)
     fName = db.Column('fName', db.String(20), nullable=False)
     lName = db.Column('lName', db.String(20), nullable=False)

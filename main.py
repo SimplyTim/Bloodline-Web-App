@@ -16,7 +16,7 @@ from models import db, User, BloodCentre, Appointment
 def create_app():
     app = Flask(__name__, static_url_path='')
     CORS(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/db' #need to set up mysql database?
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sql10338279:gQYEsx68IE@sql10.freemysqlhosting.net/sql10338279' #need to set up mysql database?
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = "SECRET6555"
 
@@ -81,7 +81,11 @@ def signUpUser():
     userdata = request.get_json()
     newUser = User(username=userdata['username'], userType=userdata['userType'], fName=userdata['fName'], lName=userdata['lName'], age=userdata['age'], DOB=userdata['DOB'])
     if 'bloodGroup' in userdata:
-        setattr(newUser, 'bloodGroup', userdata['bloodGroup'])
+        newUser.addBloodType(userdata['bloodGroup'])
+    
+    if userdata['userType'] == 'h':
+        newUser.setBloodCentre(userdata['bloodCentreId'])
+
     newUser.set_password(userdata['password'])
     print(newUser.toDict())
     try:
