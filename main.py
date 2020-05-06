@@ -87,7 +87,6 @@ def signUpUser():
         newUser.setBloodCentre(userdata['bloodCentreId'])
 
     newUser.set_password(userdata['password'])
-    print(newUser.toDict())
     try:
         db.session.add(newUser)
         db.session.commit()

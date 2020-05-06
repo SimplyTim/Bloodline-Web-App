@@ -1,4 +1,7 @@
 tasks:
   - init: pip3 install -r ./requirements.txt
+  - command: pip3 uninstall jinja2
+  - command: pip3 uninstall markupsafe
+  - command: pip3 install jinja2
 image:
   file: .gitpod.Dockerfile

@@ -13,3 +13,4 @@ WTForms==2.2.1
 jinja2==2.11.2
 MarkupSafe==1.1.1
 mysqlclient==1.4.6
+pymysql==0.9.3
