@@ -14,3 +14,4 @@ jinja2==2.11.2
 MarkupSafe==1.1.1
 mysqlclient==1.4.6
 pymysql==0.9.3
+gunicorn==20.0.4
