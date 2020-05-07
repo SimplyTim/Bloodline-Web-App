@@ -49,7 +49,7 @@ def login():
     userDetails = request.get_json()
     user = User.query.filter_by(username=userDetails['username']).first()
     if user and user.check_password(userDetails['password']):
-        token = jwt.encode({'username' : userDetails['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'username' : userDetails['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(days=7)}, app.config['SECRET_KEY'])
         return  jsonify({'token' : token.decode('UTF-8')}), 200
     return "Invalid username or password entered.", 401
 ''' End JWT Setup '''
@@ -202,7 +202,7 @@ def getAppointments():
 def getCentreAppointments(centreId):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    if account['userType']=='a' or account['id'] == centreId:
+    if account['userType']=='a' or account['centreId'] == centreId:
         appointments = Appointment.query.filter_by(centreId = centreId).all()
         if len(appointments) == 0:
             return "No appointments found for this blood centre or blood centre not found.", 404
@@ -215,7 +215,8 @@ def getCentreAppointments(centreId):
 def getUserAppointments(userId):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    if account['userType']=='a' or account['id'] == userId:
+    print(account)
+    if account['userType']=='a' or account['id'] == int(userId):
         appointments = Appointment.query.filter_by(userId = userId).all()
         if len(appointments) == 0:
             return "No appointments found for this user or user not found.", 404
