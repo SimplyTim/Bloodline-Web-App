@@ -297,6 +297,7 @@ def deleteCentre(id):
             return "Blood centre deleted successfully.", 204
         return "Invalid id or unauthorized.", 400
     return "Not authorized to access this page.", 401
-
+'''
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
+'''
