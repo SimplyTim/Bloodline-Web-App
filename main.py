@@ -62,10 +62,6 @@ def getCurrentUser(token):
         return loggedIn.toDict()
     return None
 
-def convertDate(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
-
 @app.route('/')
 def index():
     return "Welcome to Bloodline."
@@ -193,7 +189,7 @@ def getAppointments():
         appointments = Appointment.query.all()
         if appointments:
             appointmentsList = [appointment.toDict() for appointment in appointments]
-            return json.dumps(appointmentsList, default = convertDate), 200
+            return json.dumps(appointmentsList), 200
         return "No appointments found.", 404
     return "Not authorized to access this page.", 401
 
@@ -207,7 +203,7 @@ def getCentreAppointments(centreId):
         if len(appointments) == 0:
             return "No appointments found for this blood centre or blood centre not found.", 404
         appointmentsList = [appointment.toDict() for appointment in appointments]
-        return json.dumps(appointmentsList, default = convertDate), 200
+        return json.dumps(appointmentsList), 200
     return "Not authorized to access this page", 401
   
 @app.route('/appointment/user/<userId>', methods=['GET'])
