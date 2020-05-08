@@ -198,7 +198,7 @@ def getAppointments():
 def getCentreAppointments(centreId):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    if account['userType']=='a' or account['centreId'] == int(centreId):
+    if account['userType']=='a' or account['bloodCentreId'] == int(centreId):
         appointments = Appointment.query.filter_by(centreId = centreId).all()
         if len(appointments) == 0:
             return "No appointments found for this blood centre or blood centre not found.", 404
