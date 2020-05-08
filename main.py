@@ -216,7 +216,7 @@ def getUserAppointments(userId):
         if len(appointments) == 0:
             return "No appointments found for this user or user not found.", 404
         appointmentsList = [appointment.toDict() for appointment in appointments]
-        return json.dumps(appointmentsList, default = convertDate), 200
+        return json.dumps(appointmentsList), 200
     return "Not authorized to access this page", 401
 
 @app.route('/appointment/<aptId>', methods=['PUT'])
