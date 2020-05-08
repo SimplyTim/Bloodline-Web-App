@@ -198,24 +198,23 @@ def getAppointments():
     return "Not authorized to access this page.", 401
 
 @app.route('/appointment/centre/<centreId>', methods=['GET'])
-@token_required
+#@token_required
 def getCentreAppointments(centreId):
-    token = request.headers.get('Authorization')
-    account = getCurrentUser(token)
-    if account['userType']=='a' or account['centreId'] == int(centreId):
-        appointments = Appointment.query.filter_by(centreId = centreId).all()
-        if len(appointments) == 0:
-            return "No appointments found for this blood centre or blood centre not found.", 404
-        appointmentsList = [appointment.toDict() for appointment in appointments]
-        return json.dumps(appointmentsList, default = convertDate), 200
-    return "Not authorized to access this page", 401
+    #token = request.headers.get('Authorization')
+    #account = getCurrentUser(token)
+    #if account['userType']=='a' or account['centreId'] == int(centreId):
+    appointments = Appointment.query.filter_by(centreId = centreId).all()
+    if len(appointments) == 0:
+        return "No appointments found for this blood centre or blood centre not found.", 404
+    appointmentsList = [appointment.toDict() for appointment in appointments]
+    return json.dumps(appointmentsList, default = convertDate), 200
+    #return "Not authorized to access this page", 401
   
 @app.route('/appointment/user/<userId>', methods=['GET'])
 @token_required
 def getUserAppointments(userId):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    print(account)
     if account['userType']=='a' or account['id'] == int(userId):
         appointments = Appointment.query.filter_by(userId = userId).all()
         if len(appointments) == 0:
