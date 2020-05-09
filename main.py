@@ -16,7 +16,8 @@ from models import db, User, BloodCentre, Appointment
 def create_app():
     app = Flask(__name__, static_url_path='')
     CORS(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sql10338279:gQYEsx68IE@sql10.freemysqlhosting.net/sql10338279' #need to set up mysql database?
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    #'mysql+pymysql://sql10338279:gQYEsx68IE@sql10.freemysqlhosting.net/sql10338279' - for mysql
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = "SECRET6555"
 
