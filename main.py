@@ -220,6 +220,19 @@ def getUserAppointments(userId):
         return json.dumps(appointmentsList), 200
     return "Not authorized to access this page", 401
 
+@app.route('/appointment/user/scheduled/<userId>', methods=['GET'])
+@token_required
+def getUserScheduledAppointments(userId):
+    token = request.headers.get('Authorization')
+    account = getCurrentUser(token)
+    if  account['id'] == int(userId):
+        appointments = Appointment.query.filter_by(userId = userId, status="Scheduled").all()
+        if len(appointments) == 0:
+            return "No scheduled appointments found for this user or user not found.", 404
+        appointmentsList = [appointment.toDict() for appointment in appointments]
+        return json.dumps(appointmentsList), 200
+    return "Not authorized to access this page", 401
+
 @app.route('/appointment/<aptId>', methods=['PUT'])
 @token_required
 def editAppointment(aptId):
