@@ -220,7 +220,7 @@ def getUserAppointments(userId):
         return json.dumps(appointmentsList), 200
     return "Not authorized to access this page", 401
 
-@app.route('/appointment/user/scheduled/<userId>', methods=['GET'])
+@app.route('/appointment/user/<userId>/scheduled', methods=['GET'])
 @token_required
 def getUserScheduledAppointments(userId):
     token = request.headers.get('Authorization')
