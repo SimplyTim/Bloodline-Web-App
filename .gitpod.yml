@@ -3,5 +3,6 @@ tasks:
   - command: pip3 uninstall jinja2
   - command: pip3 uninstall markupsafe
   - command: pip3 install jinja2
+  - command: npm i -g heroku
 image:
   file: .gitpod.Dockerfile
