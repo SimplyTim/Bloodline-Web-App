@@ -20,9 +20,9 @@ Persistence: MySQL
 
 
 ## Creators
-*[kumar100966](https://github.com/kumar100966)
-*[SimplyTim](https://github.com/SimplyTim)
-*[Romario12c](https://github.com/Romario12c)
+* [kumar100966](https://github.com/kumar100966)
+* [SimplyTim](https://github.com/SimplyTim)
+* [Romario12c](https://github.com/Romario12c)
 
 
 ## License
