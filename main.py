@@ -212,7 +212,7 @@ def getCentreAppointments(centreId):
 def getUserAppointments(userId):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
-    if account['userType']=='a' or account['id'] == int(userId):
+    if account['userType']=='a' or account['id'] == int(userId) or account['userType']=='h':
         appointments = Appointment.query.filter_by(userId = userId).all()
         if len(appointments) == 0:
             return "No appointments found for this user or user not found.", 404
