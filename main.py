@@ -108,7 +108,7 @@ def getUser(id):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
     if account['id'] == int(id) or account['userType']=='a'  or account['userType']=='h':
-        userData = User.query.get(account['id'])
+        userData = User.query.get(int(id))
         if userData:
             return json.dumps(userData.toDict()), 200
         return "Invalid user.", 404
