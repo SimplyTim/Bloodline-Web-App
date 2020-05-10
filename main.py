@@ -1,12 +1,13 @@
 import json
+import jwt
+import datetime
 from flask_cors import CORS
 from flask import Flask, request, render_template, make_response, jsonify
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta 
-import jwt
-import datetime
 from functools import wraps
 from flask.views import MethodView
+
 
 from models import db
 
@@ -16,7 +17,7 @@ from models import db, User, BloodCentre, Appointment
 def create_app():
     app = Flask(__name__, static_url_path='')
     CORS(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://diywttygvytiun:c6c0d8078257b1fb3e79007af7610a9cc9040f1e196c72fd240b91bf4e229a23@ec2-52-202-146-43.compute-1.amazonaws.com:5432/d40jfrf502inf7'
     #'mysql+pymysql://sql10338279:gQYEsx68IE@sql10.freemysqlhosting.net/sql10338279' - for mysql
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = "SECRET6555"
@@ -108,7 +109,7 @@ def getUser(id):
     token = request.headers.get('Authorization')
     account = getCurrentUser(token)
     if account['id'] == int(id) or account['userType']=='a'  or account['userType']=='h':
-        userData = User.query.get(int(id))
+        userData = User.query.get(int(id) )
         if userData:
             return json.dumps(userData.toDict()), 200
         return "Invalid user.", 404
