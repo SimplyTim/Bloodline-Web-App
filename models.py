@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options={"pool_recycle":60})
 
 class User(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
