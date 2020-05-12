@@ -17,7 +17,8 @@ from models import db, User, BloodCentre, Appointment
 def create_app():
     app = Flask(__name__, static_url_path='')
     CORS(app)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://wvnbrrkabpyzkk:bf8ef31ece15191822cc72bb70fd77568b2401d9b45bf25c52de3f1fed4960f6@ec2-52-0-155-79.compute-1.amazonaws.com:5432/d4q06gg2oen0u5'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+    #'postgres://wvnbrrkabpyzkk:bf8ef31ece15191822cc72bb70fd77568b2401d9b45bf25c52de3f1fed4960f6@ec2-52-0-155-79.compute-1.amazonaws.com:5432/d4q06gg2oen0u5'
     #'sqlite:///test.db'
     #'mysql+pymysql://sql10338279:gQYEsx68IE@sql10.freemysqlhosting.net/sql10338279' - for mysql
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
