@@ -4,22 +4,22 @@
 A Progressive Web Application which serves to essentially sensitize and encourage users to donate blood. This is the back end portion of a blood donation web application that uses RESTful API to obtain data and generate operations on that data.
 
 ## Requirements
-jinja2==2.11.2
-click==7.1.1
-Flask==1.0.2
-Flask-Cors==3.0.8
-Flask-JWT==0.3.2
-Flask-SQLAlchemy==2.4.0
-Flask-WTF==0.14.3
-itsdangerous==1.1.0
-PyJWT==1.4.2
-pylint-flask-sqlalchemy==0.2.0
-SQLAlchemy==1.3.15
-Werkzeug==1.0.0
-WTForms==2.2.1
-MarkupSafe==1.1.1
-gunicorn==20.0.4
-psycopg2==2.8.5
+* jinja2==2.11.2
+* click==7.1.1
+* Flask==1.0.2
+* Flask-Cors==3.0.8
+* Flask-JWT==0.3.2
+* Flask-SQLAlchemy==2.4.0
+* Flask-WTF==0.14.3
+* itsdangerous==1.1.0
+* PyJWT==1.4.2
+* pylint-flask-sqlalchemy==0.2.0
+* SQLAlchemy==1.3.15
+* Werkzeug==1.0.0
+* WTForms==2.2.1
+* MarkupSafe==1.1.1
+* gunicorn==20.0.4
+* psycopg2==2.8.5
 
 ## Installation (Deploying on heroku)
 #### Prepare the App
