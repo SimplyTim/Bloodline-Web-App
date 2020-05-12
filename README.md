@@ -1,7 +1,7 @@
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/SimplyTim/Bloodline-Web-App) 
 
 # Bloodline Web Application
-A Progressive Web Application which serves to essentially sensitize and encourage users to donate blood.
+A Progressive Web Application which serves to essentially sensitize and encourage users to donate blood. This is the back end portion of a blood donation web application that uses RESTful API to obtain data and generate operations on that data.
 
 ## Requirements
 jinja2==2.11.2
@@ -21,12 +21,22 @@ MarkupSafe==1.1.1
 gunicorn==20.0.4
 psycopg2==2.8.5
 
-## Installation
+## Installation (Deploying on heroku)
+#### Prepare the App
+Clone the webapp to have a local version that you can deploy
+```
+$ heroku create
+```
+When you create an app, a git remote (called heroku) is also created and associated with your local git repository.
 
-
-
-## Usage
-
+Deploy the code
+```
+$ git push heroku master
+```
+You can visit the app URL with 
+```
+$ heroku open
+```
 
 
 
@@ -37,5 +47,5 @@ psycopg2==2.8.5
 * [Romario12c](https://github.com/Romario12c)
 
 
-
-## License
+## Front End Repo
+[Project Bloodline Front End](https://github.com/kumar100966/BloodLine)
