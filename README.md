@@ -17,6 +17,7 @@ A Progressive Web Application which serves to essentially sensitize and encourag
 
 ## Architecture
 ![arcitecture img](https://github.com/SimplyTim/Bloodline-Web-App/blob/master/WhatsApp%20Image%202020-05-12%20at%208.22.36%20PM.jpeg?raw=true)
+
 The architecture of the Web Application is a JAM stack approach and requests the web services of this application server, GoogleMaps API,SQL Alchemy and Gunicorn. The front end was build using Angular.
 
 
