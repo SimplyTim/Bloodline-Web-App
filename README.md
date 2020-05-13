@@ -1,7 +1,24 @@
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/SimplyTim/Bloodline-Web-App) 
 
 # Bloodline Web Application
-A Progressive Web Application which serves to essentially sensitize and encourage users to donate blood. This is the back end portion of a blood donation web application that uses RESTful API to obtain data and generate operations on that data.
+A Progressive Web Application which serves to essentially sensitize and encourage users to donate blood through user-friendly interface. The project is split into two github repositories consisting of the front end and back end respectively. The project was created using the JAM (Javascript API Markup) stack with the front end application being built with angular 9.1.1 and the back end application server with flask 1.0.2. This is the back end portion of a blood donation web application that uses RESTful API to obtain data and generate operations on that data. 
+
+### Features of The Application
+
+* The single-page website will host and present all the information necessary to a donor in an organized manner so that they can be knowledgeable of the process they possibly may partake in. 
+
+* The application will allow users to view the blood donation centres within their vicinity.
+
+* Users will be able to schedule an appointment with a chosen centre. They would be allowed to edit that appointment before the arrival date. The operations which a user will be allowed to perform on an appointment after its creation will include the ability to view, edit, or delete the appointment. 
+
+* Hosts will be able to manage the appointments scheduled with the centre that they are employed in. This will include the ability to accept or reject an appointment in a given scenario. 
+
+* A user of the application will be able to register, login,  and view his account information.
+
+## Architecture
+![arcitecture img](https://ibb.co/KwbZpj2)
+The architecture of the Web Application is a JAM stack approach and requests the web services of this application server, GoogleMaps API,SQL Alchemy and Gunicorn. The front end was build using Angular.
+
 
 ## Requirements
 * jinja2==2.11.2
